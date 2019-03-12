@@ -29,12 +29,18 @@ class HomeTableViewController: UITableViewController {
         cell.TweetContent.text = (tweetArray[indexPath.row]["text"] as! String)
         let imageUrl = URL(string: (user["profile_image_url_https"]as? String)!)
         let data = try? Data(contentsOf: imageUrl!)
-        
+        //cell.TimeLabel = getRelativeTime(timeString: (tweetArray[indexPath.row] ["created_at"] as? String)!)
         if let imageData = data {
             cell.ProfilePic.image = UIImage(data: imageData)
         }
-        
+        cell.tweetId = tweetArray[indexPath.row]["id"] as! Int
+        cell.setFavorited(tweetArray[indexPath.row]["favorited"] as! Bool)
+        cell.setRetweeted(tweetArray[indexPath.row]["retweeted"] as! Bool)
         return cell
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        //self.loadTweet()
     }
     
     override func viewDidLoad() {
@@ -43,6 +49,8 @@ class HomeTableViewController: UITableViewController {
         
         myrefreshControl.addTarget(self, action: #selector(loadTweet), for: .valueChanged)
         tableView.refreshControl = myrefreshControl
+        self.tableView.rowHeight = UITableView.automaticDimension
+        self.tableView.estimatedRowHeight = 150
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         
@@ -65,11 +73,13 @@ class HomeTableViewController: UITableViewController {
             print("error!")
         })
     }
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row + 1 == tweetArray.count{
-            loadMoreTweets()
-        }
-    }
+    
+    
+    //override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        //if indexPath.row + 1 == tweetArray.count{
+            //loadMoreTweets()
+        //}
+    //}
     
     @objc func loadTweet() {
         numberofTweets = 20
